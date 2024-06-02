@@ -139,13 +139,16 @@ with "inventories_last_versions" as (     -- we get only last versions of lego s
             , "sold_price_new" - "retail_price2"        as "price_difference_new"
             , "sold_price_used" - "retail_price2"       as "price_difference_used"
             , case
-                when "set_id" in (select "set_num" 
-                                  from "inventory_parts_all" 
-                                  group by 1 
-                                  having count_if("part_category" = 'minifig') > 0 and count_if("part_category" = 'minifig') >= count_if("part_category" = 'part')) 
-                                or "set_theme" = 'Collectable Minifigures' then 'minifig_set'
+                when "set_id" in (
+                            select "set_num" 
+                            from "inventory_parts_all" 
+                            group by 1 
+                            having count_if("part_category" = 'minifig') > 0  
+                              and count_if("part_category" = 'minifig') >= count_if("part_category" = 'part')
+                            ) 
+                              or "set_theme" = 'Collectable Minifigures' then 'minifig_set'
                 else 'set'
-                end                                     as "set_categories"   -- tag for LEGO sets that have only minifigures in the package
+                end as "set_categories"   -- tag for LEGO sets that have only minifigures in the package
         from "themes_prices" 
         where 1=1
           and "set_id" in (select distinct "set_num" from "sets")
